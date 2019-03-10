@@ -4,9 +4,16 @@ from Utils.layer5.DNSpacket import DNSpacket
 #from Utils.layer3.ICMPpacket import ICMPpacket
 #from Utils.ReadWriteFile.WriteCSV import WriteCSV
 
+from PacketWindowSplitter.PacketsGroup import PacketsGroup
+
 import sys
 
 def main():
+
+    pktGroup = PacketsGroup()
+    pktGroup.set_size(15)
+    pktGroup.split_pcap()
+    #=============================================#
     pktTcp = TCPpacket()
     pktTcp.flagTCPcounter()
 
