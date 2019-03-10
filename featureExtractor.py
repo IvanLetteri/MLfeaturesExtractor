@@ -11,8 +11,9 @@ import sys
 def main():
 
     pktGroup = PacketsGroup()
-    pktGroup.set_size(15)
+    pktGroup.set_size(100)
     pktGroup.split_pcap()
+
     #=============================================#
     pktTcp = TCPpacket()
     pktTcp.flagTCPcounter()
