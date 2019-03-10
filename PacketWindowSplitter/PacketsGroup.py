@@ -45,7 +45,7 @@ class PacketsGroup:
 
         self.set_nameFile()
         for count in setRows:
-            os.system("editcap -r " + self.get_pathPcap() + " PCAPs/" + str(count) + "_" + self.get_nameFile() +  rangePkts)
+            os.system("editcap -r " + self.get_pathPcap() + " PCAPs/" + str(count) + "_" + self.get_nameFile() +" "+ rangePkts)
             tmp = pktTo
             pktFrom = pktTo
             pktTo = tmp + self.get_size()
