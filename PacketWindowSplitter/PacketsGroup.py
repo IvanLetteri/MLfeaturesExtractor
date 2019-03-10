@@ -5,12 +5,14 @@ import os
 '''PEP8 stardard - here description'''
 
 class PacketsGroup:
-    #sizeOfGroup = 10
-    #pathPcap = "PCAPs/default.pcap"
+
 #==================  Constructor  ======================#
     def __init__(self):
         self.__sizeOfGroup = 10
         self.__pathPcap = "PCAPs/default.pcap"
+        self.__nameFile = ""
+
+
 
 #==================  Setter functions  ======================#
     def set_size(self, size):
@@ -19,6 +21,9 @@ class PacketsGroup:
     def set_pathPcap(self, path):
         self.__pathPcap = path
 
+    def set_nameFile(self):
+        self.__nameFile = os.path.basename(self.__pathPcap)
+
 #==================  Getter functions  ======================#
     def get_size(self):
         return self.__sizeOfGroup
@@ -26,7 +31,10 @@ class PacketsGroup:
     def get_pathPcap(self):
         return self.__pathPcap
 
-#==================  Getter functions  ======================#
+    def get_nameFile(self):
+        return self.__nameFile
+
+#==================  Split functions  ======================#
     def split_pcap(self):
         pktFrom = 0
         pktTo = self.get_size()
@@ -34,16 +42,11 @@ class PacketsGroup:
         packets = rdpcap(self.get_pathPcap())
 
         setRows = range(0, int(len(packets)/self.__sizeOfGroup))
+
+        self.set_nameFile()
         for count in setRows:
-            os.system("editcap -r "+ self.get_pathPcap() +" PCAPs/"+str(count)+".pcap "+rangePkts)
+            os.system("editcap -r " + self.get_pathPcap() + " PCAPs/" + str(count) + "_" + self.get_nameFile() +  rangePkts)
             tmp = pktTo
             pktFrom = pktTo
             pktTo = tmp + self.get_size()
             rangePkts = str(pktFrom)+"-"+str(pktTo)
-
-            #os.system(
-         #   "tshark  -T fields -e  data.data -e frame.time -w Eavesdrop_Data.pcap > Eavesdrop_Data.txt -F pcap -c 1000")
-        #packets = rdpcap(self.get_pathPcap())
-        #size = range(0, self.get_size())
-        #for count in size:
-            #print(packets[count])
