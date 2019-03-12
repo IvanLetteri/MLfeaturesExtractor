@@ -5,16 +5,20 @@ from Utils.layer5.DNSpacket import DNSpacket
 #from Utils.ReadWriteFile.WriteCSV import WriteCSV
 
 from PacketWindowSplitter.PacketsGroup import PacketsGroup
-
+from PCAPmanager.PCAPiterator import PCAPiterator
 import sys
 
 def main():
+    pcapsIterator = PCAPiterator()
+    pcapsIterator.set_folderPCAPs("PCAPs")
+    pcapsIterator.iteratePCAPs()
 
-    pktGroup = PacketsGroup()
-    pktGroup.set_size(100)
-    pktGroup.split_pcap()
+    #pktGroup = PacketsGroup()
+    #pktGroup.set_size(100)
+    #pktGroup.split_pcap()
 
     #=============================================#
+    '''
     pktTcp = TCPpacket()
     pktTcp.flagTCPcounter()
 
@@ -29,7 +33,7 @@ def main():
     print(pktUdp.numPktsUDP)
     print(pktTcp.numPktsTCP)
     print(pktTcp.getDictTCPflags())
-
+    '''
 
 if __name__ == "__main__":
     try:
