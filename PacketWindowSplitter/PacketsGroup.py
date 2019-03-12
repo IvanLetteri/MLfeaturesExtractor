@@ -12,8 +12,6 @@ class PacketsGroup:
         self.__pathPcap = "PCAPs/default.pcap"
         self.__nameFile = ""
 
-
-
 #==================  Setter functions  ======================#
     def set_size(self, size):
         self.__sizeOfGroup = size
@@ -39,14 +37,25 @@ class PacketsGroup:
         pktFrom = 0
         pktTo = self.get_size()
         rangePkts = str(pktFrom)+"-"+str(pktTo)
-        packets = rdpcap(self.get_pathPcap())
+# ==================  Read PCAP  ======================#
+        pcapFile = rdpcap(self.get_pathPcap())
 
-        setRows = range(0, int(len(packets)/self.__sizeOfGroup))
+        setRows = range(0, int(len(pcapFile)/self.__sizeOfGroup))
 
         self.set_nameFile()
-        for count in setRows:
-            os.system("editcap -r " + self.get_pathPcap() + " PCAPs/" + str(count) + "_" + self.get_nameFile() +" "+ rangePkts)
-            tmp = pktTo - 1
-            pktFrom = pktTo
-            pktTo = tmp + self.get_size()
-            rangePkts = str(pktFrom)+"-"+str(pktTo)
+# ==================  Splitting Directory  ======================#
+        pathFolder = "PCAPs/" + self.get_nameFile()[0:len(self.get_nameFile())-5]
+        try:
+            os.mkdir(pathFolder)
+        except OSError:
+            print("Creation of the directory %s failed" % pathFolder)
+
+        else:
+            print("Successfully created the directory %s " % pathFolder)
+# ==================  Splitting pcap functions  with tshark module ======================#
+            for count in setRows:
+                os.system("editcap -r " + self.get_pathPcap() + " " + pathFolder + "/" + str(count) + "_" + self.get_nameFile() +" "+ rangePkts)
+                tmp = pktTo - 1
+                pktFrom = pktTo
+                pktTo = tmp + self.get_size()
+                rangePkts = str(pktFrom)+"-"+str(pktTo)
