@@ -13,8 +13,8 @@ class PacketsTime:
         # interval time in minutes - default 15 minutes
         self.timeWindow = (15*60)
         self.pathPcap = "PCAPs/1stExercise.pcap"
-        self.__nameFile = ""
-
+        self.objPcapFile = ""
+        self.nameFile = ""
 #==================  Setter functions  ======================#
     def set_timeWindow(self, interval):
         self.timeWindow = interval
@@ -23,7 +23,10 @@ class PacketsTime:
         self.pathPcap = path
 
     def set_nameFile(self):
-        self.__nameFile = os.path.basename(self.pathPcap)
+        self.nameFile = os.path.basename(self.pathPcap)
+
+    def set_objPcapFile(self):
+        self.objPcapFile = pyshark.FileCapture(self.get_pathPcap(), only_summaries=False)
 
 #==================  Getter functions  ======================#
     def get_timeWindow(self):
@@ -33,32 +36,45 @@ class PacketsTime:
         return self.pathPcap
 
     def get_nameFile(self):
-        return self.__nameFile
+        return self.nameFile
 
-    def get_firstPcap(self):
-        cap = pyshark.FileCapture(self.get_pathPcap(), only_summaries=True)
-        print(cap[0])
+    def get_objPcapFile(self):
+        return self.objPcapFile
+
+#==================  Util functions  ======================#
+    def get_timeStampPkt(self, num_rowPkt):
+        return self.objPcapFile[num_rowPkt].sniff_timestamp
+# =========================================================#
+
         #os.system("editcap -r " + self.get_pathPcap() + " PCAPs/tempPkt.pcap 0 - 1")
         #tempPkt = rdpcap("PCAPs/tempPkt.pcap")
         #for timestamp, buf in tempPkt:
             #print('Timestamp: ', str(datetime.utcfromtimestamp(timestamp)))
 
-        #for timestamp, buf in pcap:
-             #   os.system("editcap -A " + str(datetime.utcfromtimestamp(timestamp)) + " -B " + str(datetime.utcfromtimestamp(timestamp+self.get_timeWindow())) + " infile.cap outfile.cap")
 
              #   print('Timestamp: ', str(datetime.utcfromtimestamp(timestamp)))
 
 #==================  Split functions  ======================#
     def split_pcap(self):
-        pktFrom = 0
-        pktTo = self.get_timeWindow()
-        rangePkts = str(pktFrom)+"-"+str(pktTo)
+        pktFromTime = self.get_timeStampPkt(0)
+        pktToTime = round(float(pktFromTime)) + self.get_timeWindow()
+        print(pktFromTime)
+        print(pktToTime)
+        print(type(pktFromTime))
+        #editcap -A "2011-04-14 11:00:00" -B "2011-04-14 13:00:00" infile.cap outfile.cap
+        cmdEditcap = 'editcap -A "' + str(datetime.utcfromtimestamp(float(pktFromTime))) + '" -B "' + str(datetime.utcfromtimestamp(float(pktToTime))) + '" '
+        inFile = self.get_pathPcap()
+        outFile = ' PCAPs/TimeWindowsPCAPs/outTest.pcap'
+        cmdEditcap = cmdEditcap + inFile + outFile
+        print(cmdEditcap)
+        os.system(cmdEditcap)
+        exit(0)
 # ==================  Read PCAP  ======================#
-        pcapFile = rdpcap(self.get_pathPcap())
+        #pcapFile = rdpcap(self.get_pathPcap())
 
-        setRows = range(0, int(len(pcapFile)/self.__sizeOfGroup))
+#        setRows = range(0, int(len(pcapFile)/self.__sizeOfGroup))
 
-        self.set_nameFile()
+
 # ==================  Splitting Directory  ======================#
         pathFolder = "PCAPs/TimeWindowsPCAPs/" + self.get_nameFile()[0:len(self.get_nameFile())-5]
         try:
