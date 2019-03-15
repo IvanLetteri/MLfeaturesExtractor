@@ -9,7 +9,6 @@ class PCAPiterator:
     def __init__(self):
         self.folderPCAPs = "PCAPs/*.pcap"
 
-
 #==================  Setter functions  ======================#
     def set_folderPCAPs(self, folder):
         self.folderPCAPs = folder + "/*.pcap"
