@@ -1,41 +1,57 @@
-from dpkt.tcp import TCP
+import dpkt
+import datetime
+import pyshark
 from scapy.all import *
 import os
 
 '''PEP8 stardard - here description'''
 
-class PacketsGroup:
+class PacketsTime:
 
 #==================  Constructor  ======================#
     def __init__(self):
-        self.__sizeOfGroup = 100
-        self.__pathPcap = "PCAPs/default.pcap"
+        # interval time in minutes - default 15 minutes
+        self.timeWindow = (15*60)
+        self.pathPcap = "PCAPs/1stExercise.pcap"
         self.__nameFile = ""
 
 #==================  Setter functions  ======================#
-    def set_size(self, size):
-        self.__sizeOfGroup = size
+    def set_timeWindow(self, interval):
+        self.timeWindow = interval
 
     def set_pathPcap(self, path):
-        self.__pathPcap = path
+        self.pathPcap = path
 
     def set_nameFile(self):
-        self.__nameFile = os.path.basename(self.__pathPcap)
+        self.__nameFile = os.path.basename(self.pathPcap)
 
 #==================  Getter functions  ======================#
-    def get_size(self):
-        return self.__sizeOfGroup
+    def get_timeWindow(self):
+        return self.timeWindow
 
     def get_pathPcap(self):
-        return self.__pathPcap
+        return self.pathPcap
 
     def get_nameFile(self):
         return self.__nameFile
 
+    def get_firstPcap(self):
+        cap = pyshark.FileCapture(self.get_pathPcap(), only_summaries=True)
+        print(cap[0])
+        #os.system("editcap -r " + self.get_pathPcap() + " PCAPs/tempPkt.pcap 0 - 1")
+        #tempPkt = rdpcap("PCAPs/tempPkt.pcap")
+        #for timestamp, buf in tempPkt:
+            #print('Timestamp: ', str(datetime.utcfromtimestamp(timestamp)))
+
+        #for timestamp, buf in pcap:
+             #   os.system("editcap -A " + str(datetime.utcfromtimestamp(timestamp)) + " -B " + str(datetime.utcfromtimestamp(timestamp+self.get_timeWindow())) + " infile.cap outfile.cap")
+
+             #   print('Timestamp: ', str(datetime.utcfromtimestamp(timestamp)))
+
 #==================  Split functions  ======================#
     def split_pcap(self):
         pktFrom = 0
-        pktTo = self.get_size()
+        pktTo = self.get_timeWindow()
         rangePkts = str(pktFrom)+"-"+str(pktTo)
 # ==================  Read PCAP  ======================#
         pcapFile = rdpcap(self.get_pathPcap())
@@ -44,7 +60,7 @@ class PacketsGroup:
 
         self.set_nameFile()
 # ==================  Splitting Directory  ======================#
-        pathFolder = "PCAPs/" + self.get_nameFile()[0:len(self.get_nameFile())-5]
+        pathFolder = "PCAPs/TimeWindowsPCAPs/" + self.get_nameFile()[0:len(self.get_nameFile())-5]
         try:
             os.mkdir(pathFolder)
         except OSError:
@@ -54,6 +70,8 @@ class PacketsGroup:
             print("================================================================")
             print("Successfully created the directory %s " % pathFolder)
 # ==================  Splitting pcap functions  with tshark module ======================#
+            #read the time of the first pkt
+            #print('Timestamp: ', str(datetime.datetime.utcfromtimestamp(timestamp)))
             for count in setRows:
                 os.system("editcap -r " + self.get_pathPcap() + " " + pathFolder + "/" + str(count) + "_" + self.get_nameFile() +" "+ rangePkts)
                 tmp = pktTo - 1

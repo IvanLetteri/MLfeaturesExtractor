@@ -17,14 +17,14 @@ class PCAPiterator:
     def get_folderPCAPs(self):
         return self.folderPCAPs
 
-# ==================  Constructor  ======================#
-    def iteratePCAPs(self):
+# ==================  Iterator  ======================#
+    def iteratePCAPs(self, split_size):
         files = glob.glob(self.get_folderPCAPs())
         for name in files:
             try:
                 pktGroup = PacketsGroup()
                 pktGroup.set_pathPcap(name)
-                pktGroup.set_size(100)
+                pktGroup.set_size(split_size)
                 pktGroup.split_pcap()
             except IOError as exc:
                 if exc.errno != errno.EISDIR:

@@ -6,13 +6,20 @@ from Utils.layer5.DNSpacket import DNSpacket
 
 from PacketWindowSplitter.PacketsGroup import PacketsGroup
 from PCAPmanager.PCAPiterator import PCAPiterator
+from PacketWindowSplitter.PacketsTime import PacketsTime
+
 import sys
 
 def main():
+
+    '''
+    pkts4pcap_split = 300
     pcapsIterator = PCAPiterator()
     pcapsIterator.set_folderPCAPs("PCAPs")
-    pcapsIterator.iteratePCAPs()
-
+    pcapsIterator.iteratePCAPs(pkts4pcap_split)
+    '''
+    test = PacketsTime()
+    test.get_firstPcap()
     #pktGroup = PacketsGroup()
     #pktGroup.set_size(100)
     #pktGroup.split_pcap()
