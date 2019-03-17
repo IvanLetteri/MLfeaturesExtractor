@@ -19,6 +19,7 @@ def main():
     pcapsIterator.iteratePCAPs(pkts4pcap_split)
     '''
     test = PacketsTime()
+    test.set_timeWindow(15*60)
     test.set_objPcapFile()
     test.split_pcap()
     #pktGroup = PacketsGroup()

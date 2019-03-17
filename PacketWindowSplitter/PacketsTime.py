@@ -44,30 +44,28 @@ class PacketsTime:
 #==================  Util functions  ======================#
     def get_timeStampPkt(self, num_rowPkt):
         return self.objPcapFile[num_rowPkt].sniff_timestamp
+
 # =========================================================#
+    def cmdEditcap(self, pktFromTime, pktToTime, outputFile):
+        #ex. ->  editcap -A "2011-04-14 11:00:00" -B "2011-04-14 13:00:00" infile.cap outfile.cap
+        cmdPart1 =  'editcap -A "' + str(datetime.utcfromtimestamp(float(pktFromTime))) + '" -B "' + str(datetime.utcfromtimestamp(float(pktToTime))) + '" '
+        cmd = cmdPart1 + self.get_pathPcap() + ' PCAPs/TimeWindowsPCAPs/'+ outputFile +'.pcap'
+        print("|=======================================   Splitting time command   ================================================|")
+        print(cmd)
+        print("|===================================================================================================================|")
+        return cmd
 
-        #os.system("editcap -r " + self.get_pathPcap() + " PCAPs/tempPkt.pcap 0 - 1")
-        #tempPkt = rdpcap("PCAPs/tempPkt.pcap")
-        #for timestamp, buf in tempPkt:
-            #print('Timestamp: ', str(datetime.utcfromtimestamp(timestamp)))
-
-
-             #   print('Timestamp: ', str(datetime.utcfromtimestamp(timestamp)))
+    def execEditcap(self, cmd):
+        os.system(cmd)
 
 #==================  Split functions  ======================#
     def split_pcap(self):
-        pktFromTime = self.get_timeStampPkt(0)
-        pktToTime = round(float(pktFromTime)) + self.get_timeWindow()
-        print(pktFromTime)
-        print(pktToTime)
-        print(type(pktFromTime))
-        #editcap -A "2011-04-14 11:00:00" -B "2011-04-14 13:00:00" infile.cap outfile.cap
-        cmdEditcap = 'editcap -A "' + str(datetime.utcfromtimestamp(float(pktFromTime))) + '" -B "' + str(datetime.utcfromtimestamp(float(pktToTime))) + '" '
-        inFile = self.get_pathPcap()
-        outFile = ' PCAPs/TimeWindowsPCAPs/outTest.pcap'
-        cmdEditcap = cmdEditcap + inFile + outFile
-        print(cmdEditcap)
-        os.system(cmdEditcap)
+        #read the timestamp of the first packet
+        pktFromTime = round(float(self.get_timeStampPkt(0)))
+        #computes the range
+        pktToTime = pktFromTime + round(self.get_timeWindow())
+        self.execEditcap(self.cmdEditcap(pktFromTime, pktToTime, "outTest"))
+
         exit(0)
 # ==================  Read PCAP  ======================#
         #pcapFile = rdpcap(self.get_pathPcap())
