@@ -15,6 +15,10 @@ class PacketsTime:
         self.pathPcap = "PCAPs/1stExercise.pcap"
         self.objPcapFile = ""
         self.nameFile = ""
+        self.startPcapTime = ""
+        self.endPcapTime = ""
+        self.pcapLength = 0
+
 #==================  Setter functions  ======================#
     def set_timeWindow(self, interval):
         self.timeWindow = interval
@@ -24,11 +28,23 @@ class PacketsTime:
 
     def set_nameFile(self):
         self.nameFile = os.path.basename(self.pathPcap)
-
+# read the pcap file
     def set_objPcapFile(self):
         self.objPcapFile = pyshark.FileCapture(self.get_pathPcap(), only_summaries=False)
 
+    def set_startPcapTime(self):
+        self.endPcapTime = round(float(self.get_timeStampPkt(0)))
+
+    def set_endPcapTime(self):
+        self.endPcapTime = round(float(self.get_timeStampPkt(self.get_PcapLength())))
+
+    def set_pcapLenght(self):
+        self.pcapLenght = len(self.objPcapFile)
+
 #==================  Getter functions  ======================#
+    def get_PcapLength(self):
+        return len(self.objPcapFile)
+
     def get_timeWindow(self):
         return self.timeWindow
 
@@ -46,6 +62,7 @@ class PacketsTime:
         return self.objPcapFile[num_rowPkt].sniff_timestamp
 
 # =========================================================#
+    #generate the command string
     def cmdEditcap(self, pktFromTime, pktToTime, outputFile):
         #ex. ->  editcap -A "2011-04-14 11:00:00" -B "2011-04-14 13:00:00" infile.cap outfile.cap
         cmdPart1 =  'editcap -A "' + str(datetime.utcfromtimestamp(float(pktFromTime))) + '" -B "' + str(datetime.utcfromtimestamp(float(pktToTime))) + '" '
@@ -62,8 +79,11 @@ class PacketsTime:
     def split_pcap(self):
         #read the timestamp of the first packet
         pktFromTime = round(float(self.get_timeStampPkt(0)))
-        #computes the range
+        print(self.get_PcapLength())
+        #computes the delta time
         pktToTime = pktFromTime + round(self.get_timeWindow())
+
+        #for count in setRows:
         self.execEditcap(self.cmdEditcap(pktFromTime, pktToTime, "outTest"))
 
         exit(0)
