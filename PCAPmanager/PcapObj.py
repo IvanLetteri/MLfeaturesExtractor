@@ -1,11 +1,13 @@
+from PCAPmanager import PacketObj
 class PcapObj:
 # ==================  Constructor  ======================#
     def __init__(self):
-        self.lengthPcap = 0
+        self.numOfPkts = 0
         self.pathPcap = ""
         self.nameFilePcap = ""
         self.startingTime = ""
         self.endingTime = ""
+        self.listOfPkts = []
 
 #==================  Setter functions  ======================#
     def set_lengthPcap(self, lengthPcap):

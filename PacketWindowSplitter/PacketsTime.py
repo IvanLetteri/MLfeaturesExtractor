@@ -63,10 +63,12 @@ class PacketsTime:
 
 # =========================================================#
     #generate the command string
-    def cmdEditcap(self, pktFromTime, pktToTime, outputFile):
+    def cmdEditcap(self, pktFromTime, pktToTime, outputFile, part):
         #ex. ->  editcap -A "2011-04-14 11:00:00" -B "2011-04-14 13:00:00" infile.cap outfile.cap
-        cmdPart1 =  'editcap -A "' + str(datetime.utcfromtimestamp(float(pktFromTime))) + '" -B "' + str(datetime.utcfromtimestamp(float(pktToTime))) + '" '
-        cmd = cmdPart1 + self.get_pathPcap() + ' PCAPs/TimeWindowsPCAPs/'+ outputFile +'.pcap'
+        fromTime = str(datetime.utcfromtimestamp(float(pktFromTime)))
+        toTime = str(datetime.utcfromtimestamp(float(pktToTime)))
+        cmdPart1 =  'editcap -A "' + fromTime + '" -B "' + toTime + '" '
+        cmd = cmdPart1 + self.get_pathPcap() + " " + outputFile + 'Part'+ str(part) +'.pcap'
         print("|=======================================   Splitting time command   ================================================|")
         print(cmd)
         print("|===================================================================================================================|")
@@ -83,11 +85,26 @@ class PacketsTime:
         #computes the delta time
         pktToTime = pktFromTime + round(self.get_timeWindow())
 
-        #for count in setRows:
-        self.execEditcap(self.cmdEditcap(pktFromTime, pktToTime, "outTest"))
+        self.set_nameFile()
+        # ==================  Splitting PcapTimeWindow Directory  ======================#
+        nameFile = self.get_nameFile()[0:len(self.get_nameFile()) - 5]
+        pathFolder = "PCAPs/TimeWindowsPCAPs/" + nameFile
+        try:
+            os.mkdir(pathFolder)
+            print("================================================================")
+            print("Successfully created the directory %s " % pathFolder)
+            # ==================  Splitting pcap functions  with tshark module ======================#
 
-        exit(0)
-# ==================  Read PCAP  ======================#
+            # for count in setRows:
+            self.execEditcap(self.cmdEditcap(pktFromTime, pktToTime, pathFolder+'/'+nameFile, 1))
+
+            exit(0)
+
+        except OSError:
+            print("Creation of the directory %s failed" % pathFolder)
+
+
+        # ==================  Read PCAP  ======================#
         #pcapFile = rdpcap(self.get_pathPcap())
 
 #        setRows = range(0, int(len(pcapFile)/self.__sizeOfGroup))
