@@ -1,0 +1,5 @@
+digraph "classes" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{PacketsGroup|\l|get_nameFile()\lget_pathPcap()\lget_size()\lset_nameFile()\lset_pathPcap()\lset_size()\lsplit_pcap()\l}", shape="record"];
+}
